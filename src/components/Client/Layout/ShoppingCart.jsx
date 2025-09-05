@@ -596,10 +596,10 @@ const handleCheckout = () => {
                   <>
              <button 
   onClick={handleCheckout} 
-  disabled={isLoading || isSubmitting} 
+  disabled={ isSubmitting} 
   className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 transition-colors flex items-center justify-center text-sm sm:text-base"
 >
-  {(isLoading || isSubmitting) 
+  {( isSubmitting) 
     ? <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white mr-2"></div> 
     : <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />} 
   Complete Order
