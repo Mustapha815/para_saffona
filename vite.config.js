@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
 
       '/api': {
-        target: 'http://127.0.0.1:8000', // Laravel backend
+        target: 'https://api.parasaffona.com', // Laravel backend
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '/api'),
