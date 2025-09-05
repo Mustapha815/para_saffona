@@ -10,6 +10,7 @@ import {
   Heart,
   Sparkles,
   Home,
+  Bolt,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getFavorites } from '../../../api/favorites';
@@ -21,7 +22,16 @@ const ClientHeader = () => {
   const [showAlert, setShowAlert] = useState(false);
 
 const isLogged = localStorage.getItem('islogged') === 'true';
-
+  
+  // Fetch current user
+  const { data: userData, isLoading, isError } = useQuery({
+    queryKey: ['user'],
+    queryFn: me,
+    enabled: isLogged,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+    refetchOnWindowFocus: false
+  });
 // React Query
 const { data: favoriteItems  } = useQuery({
   queryKey: ['favorites'],
@@ -130,7 +140,7 @@ const favoritesList = React.useMemo(() => {
              {/* Right Section - Hide user actions on mobile as they'll be in footer */}
             <div className="flex items-center space-x-3 rtl:space-x-reverse">
               {/* Language Selector */}
-              <div className="relative group hidden sm:block">
+              <div className="relative group flex items-center justify-between">
                 <button className="flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 rounded-xl hover:bg-gray-50 transition-all duration-300 border border-gray-200 hover:border-emerald-200">
                   <Globe className="h-4 w-4 text-gray-600" />
                   <span className="text-lg">
@@ -187,10 +197,15 @@ const favoritesList = React.useMemo(() => {
                 )}
               </Link>
 
-              {/* User Account - Hidden on mobile */}
-              <Link to="/account-profile" className="hidden md:flex p-3 rounded-xl hover:bg-gray-50 transition-all duration-300 border border-gray-200 hover:border-blue-200 group">
-                <User className="h-5 w-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
+            { userData && userData.role_id!==1 ? (
+              <Link to="/account-profile" className="hidden md:block p-3 rounded-xl hover:bg-gray-50 transition-all duration-300 border border-gray-200 hover:border-emerald-200 group">
+                <User className="h-5 w-5 text-gray-600 group-hover:text-emerald-600 transition-colors" />
               </Link>
+                ):(
+           <Link to="/admin/dashboard" className="hidden md:block p-3 rounded-xl hover:bg-gray-50 transition-all duration-300 border border-gray-200 hover:border-emerald-200 group">
+                <Bolt className="h-5 w-5 text-gray-600 group-hover:text-emerald-600 transition-colors" />
+              </Link>
+                )}
 
               
             </div>
@@ -264,7 +279,8 @@ const favoritesList = React.useMemo(() => {
 
 
           
-          <Link
+         { userData.role_id!==1 ? (
+           <Link
             to="/account-profile"
             className={`flex flex-col items-center justify-center p-2 ${
               isActivePath('/account-profile') ? 'text-emerald-600' : 'text-gray-600'
@@ -273,6 +289,17 @@ const favoritesList = React.useMemo(() => {
             <User className="h-5 w-5" />
             <span className="text-xs mt-1">{t('profile')}</span>
           </Link>
+          ):(
+             <Link
+            to="/admin/dashboard"
+            className={`flex flex-col items-center justify-center p-2 ${
+              isActivePath('/admin/dashboard') ? 'text-emerald-600' : 'text-gray-600'
+            }`}
+          >
+            <Bolt className="h-5 w-5" />
+            <span className="text-xs mt-1">{t('dashboard')}</span>
+          </Link>
+          )}
         </div>
       </div>
     </>

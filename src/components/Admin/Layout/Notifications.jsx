@@ -9,11 +9,14 @@ const AdminNotifications = () => {
   const [activeType, setActiveType] = useState('all');
   const queryClient = useQueryClient();
   const {t} = useLanguage();
+  const isLogged = localStorage.getItem('islogged') === 'true';
 
   // Fetch notifications using React Query
   const { data: notifications = [], isLoading, error } = useQuery({
     queryKey: ['notifications'],
     queryFn: fetch_notifications,
+      enabled: !!isLogged, // Only run the query if the user is logged in
+    refreshInterval: 1000, // Refetch every 1 second
   });
 
   // Update notification mutation

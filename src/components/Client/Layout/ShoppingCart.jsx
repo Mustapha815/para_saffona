@@ -36,19 +36,7 @@ const ShoppingCart = () => {
     { id: 3, name: 'Upper_Agadir', delivery_fee: 35.00 },
   ];
 
-  const createOrderMutation = useMutation({
-    mutationFn: createOrder,
-    onSuccess: (data) => {
 
-        setShowAlert(true);
-      
-      dispatch(clearCart());
-
-    },
-    onError: (error) => {
-      alert(`Order failed: ${error.message}`);
-    }
-  });
 
   // Helper functions
   const updateQuantity = (itemId, newQuantity, isPack) => {
@@ -160,10 +148,16 @@ const ShoppingCart = () => {
     if (currentStep === 'info') setCurrentStep('cart');
     else if (currentStep === 'review') setCurrentStep('info');
   };
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleCheckout = () => {
-    if (validateForm()) {
-      const orderData = {
+const handleCheckout = () => {
+  if (isSubmitting) return; // immediately block multiple clicks
+
+  if (validateForm()) {
+    setIsSubmitting(true);
+
+    createOrderMutation.mutate(
+      {
         name: customerInfo.name,
         phone_number: customerInfo.phoneNumber,
         address: customerInfo.address,
@@ -174,18 +168,24 @@ const ShoppingCart = () => {
           target_id: item.id,
           quantity: item.quantity,
           price: item.price
-        }))
-      };
+        })),
+        user_id: JSON.parse(localStorage.getItem('user'))?.id || null,
+      },
+      {
+        onSuccess: (data) => {
+          setIsSubmitting(false);
+          setShowAlert(true);
+          dispatch(clearCart());
+        },
+        onError: (error) => {
+          setIsSubmitting(false);
+          alert(`Order failed: ${error.message}`);
+        }
+      }
+    );
+  }
+};
 
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (user && user.id) orderData.user_id = user.id;
-
-      createOrderMutation.mutate(orderData);
-    }
-    setShowAlert(true);
-  };
-
-  const isLoading = createOrderMutation.isLoading;
   const subtotal = calculateSubtotal();
   const isFreeDelivery = subtotal >= 500;
 
@@ -594,9 +594,16 @@ const ShoppingCart = () => {
                 )}
                 {currentStep === 'review' && (
                   <>
-                    <button onClick={handleCheckout} disabled={isLoading} className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 transition-colors flex items-center justify-center text-sm sm:text-base">
-                      {isLoading ? <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white mr-2"></div> : <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />} Complete Order
-                    </button>
+             <button 
+  onClick={handleCheckout} 
+  disabled={isLoading || isSubmitting} 
+  className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 transition-colors flex items-center justify-center text-sm sm:text-base"
+>
+  {(isLoading || isSubmitting) 
+    ? <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white mr-2"></div> 
+    : <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />} 
+  Complete Order
+</button>
                     <button onClick={handlePreviousStep} className="w-full border border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base">
                       {t('backToInformation')}
                     </button>
