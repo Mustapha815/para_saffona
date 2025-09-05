@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://api.parasaffona.com', // Laravel backend
+        target: `${import.meta.env.VITE_API_BASE_URL}`, // Laravel backend
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '/api'),
