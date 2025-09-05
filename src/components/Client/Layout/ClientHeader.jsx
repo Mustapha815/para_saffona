@@ -17,6 +17,7 @@ import { getFavorites } from '../../../api/favorites';
 import { useSelector } from 'react-redux';
 import Alert from '../halpers/Alert';
 import { me } from '../../../api/auth';
+import is from 'date-fns/esm/locale/is/index.js';
 
 const ClientHeader = () => {
   
@@ -81,12 +82,19 @@ const favoritesList = React.useMemo(() => {
   const cartItemsCount = cartItems.length;
 
  
-
+  if (isLoading) return   
+   <section className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 min-h-[500px] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">{t('loading')}</p>
+        </div>
+      </section>;
 
   // Check if current path is active for bottom nav highlighting
   const isActivePath = (path) => {
     return location.pathname === path;
   };
+
 
   return (
     <>
@@ -198,17 +206,17 @@ const favoritesList = React.useMemo(() => {
                 )}
               </Link>
 
-            { userData && userData.role_id!==1 ? (
-              <Link to="/account-profile" className="hidden md:block p-3 rounded-xl hover:bg-gray-50 transition-all duration-300 border border-gray-200 hover:border-emerald-200 group">
-                <User className="h-5 w-5 text-gray-600 group-hover:text-emerald-600 transition-colors" />
-              </Link>
-                ):(
-           <Link to="/admin/dashboard" className="hidden md:block p-3 rounded-xl hover:bg-gray-50 transition-all duration-300 border border-gray-200 hover:border-emerald-200 group">
+            {  userData?.role_id===1 ? (
+               <Link to="/admin/dashboard" className="hidden md:block p-3 rounded-xl hover:bg-gray-50 transition-all duration-300 border border-gray-200 hover:border-emerald-200 group">
                 <Bolt className="h-5 w-5 text-gray-600 group-hover:text-emerald-600 transition-colors" />
               </Link>
-                )}
+                ) : (
+                  <Link to="/account-profile" className="hidden md:block p-3 rounded-xl hover:bg-gray-50 transition-all duration-300 border border-gray-200 hover:border-emerald-200 group">
+                    <User className="h-5 w-5 text-gray-600 group-hover:text-emerald-600 transition-colors" />
+                  </Link>
+                )
+              }
 
-              
             </div>
           </div>
         </div>
@@ -280,17 +288,7 @@ const favoritesList = React.useMemo(() => {
 
 
           
-         { userData.role_id!==1 ? (
-           <Link
-            to="/account-profile"
-            className={`flex flex-col items-center justify-center p-2 ${
-              isActivePath('/account-profile') ? 'text-emerald-600' : 'text-gray-600'
-            }`}
-          >
-            <User className="h-5 w-5" />
-            <span className="text-xs mt-1">{t('profile')}</span>
-          </Link>
-          ):(
+         { userData?.role_id===1 ? (
              <Link
             to="/admin/dashboard"
             className={`flex flex-col items-center justify-center p-2 ${
@@ -299,6 +297,16 @@ const favoritesList = React.useMemo(() => {
           >
             <Bolt className="h-5 w-5" />
             <span className="text-xs mt-1">{t('dashboard')}</span>
+          </Link>
+          ):(
+           <Link
+            to="/account-profile"
+            className={`flex flex-col items-center justify-center p-2 ${
+              isActivePath('/account-profile') ? 'text-emerald-600' : 'text-gray-600'
+            }`}
+          >
+            <User className="h-5 w-5" />
+            <span className="text-xs mt-1">{t('profile')}</span>
           </Link>
           )}
         </div>
