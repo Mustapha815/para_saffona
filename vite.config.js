@@ -4,11 +4,13 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
+
       '/api': {
-        target: `${import.meta.env.VITE_API_BASE_URL}`, // Laravel backend
+        target: 'http://127.0.0.1:8000', // Laravel backend
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '/api'),
-    },
+      },
+    
   },
 });
