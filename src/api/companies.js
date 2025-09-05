@@ -3,7 +3,7 @@ import api from "./api";
 // Fetch all companies
 export const fetch_companies = async () => {
   try {
-    const { data } = await api.get("/companies");
+    const { data } = await api.get("https://api.parasaffona.com/api/companies");
     return data;
   } catch (err) {
     if (err.response) {
