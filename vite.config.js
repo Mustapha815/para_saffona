@@ -7,7 +7,7 @@ export default defineConfig({
 
       '/api': {
         target: `${import.meta.env.VITE_API_BASE_URL}`, // Laravel backend
-        changeOrigin: true,
+        changeOrigin: false,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '/api'),
       },
