@@ -16,6 +16,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getFavorites } from '../../../api/favorites';
 import { useSelector } from 'react-redux';
 import Alert from '../halpers/Alert';
+import { me } from '../../../api/auth';
 
 const ClientHeader = () => {
   
