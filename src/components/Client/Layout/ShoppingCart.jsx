@@ -436,7 +436,7 @@ const ShoppingCart = () => {
                           }`}
                         >
                           <option value="">{t('cartselectDeliveryArea')}</option>
-                          {deliveryAreas.map(area => <option key={area.id} value={area.name}>{area.name} ({area.delivery_fee.toFixed(2)} MAD)</option>)}
+                          {deliveryAreas.map(area => <option key={area.id} value={area.name}>{area.name} </option>)}
                         </select>
                       </div>
                       {formErrors.deliveryArea && (

@@ -108,6 +108,12 @@ const Register = () => {
       setError('Password must be at least 6 characters');
       return;
     }
+    // ✅ Gmail validation
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!gmailRegex.test(formData.email)) {
+      setError('Email must be a valid Gmail address');
+      return;
+    }
 
     mutation.mutate({
       full_name: formData.full_name,

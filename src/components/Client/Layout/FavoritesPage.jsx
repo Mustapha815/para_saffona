@@ -346,7 +346,13 @@ const FavoritesPage = () => {
               
               return (
                 <div key={`${isPack ? 'pack-' : 'product-'}${item.id}`} className="group bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col h-full">
-                  <div className="relative aspect-square overflow-hidden">
+                  <div className="relative aspect-square overflow-hidden"
+                   onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewItem(item, isPack);
+                        }}
+                  
+                  >
                     {isPack && packImages.length > 1 ? (
                       // Auto-scrolling image slider for packs with multiple images
                       <PackImageSlider images={packImages} alt={displayName} />

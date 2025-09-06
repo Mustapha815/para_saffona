@@ -36,6 +36,12 @@ const VerfiyGmail = () => {
   const handleEmailSubmit = (e) => {
     e.preventDefault();
     setError("");
+    // ✅ Gmail validation
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!gmailRegex.test(email)) {
+      setError('Email must be a valid Gmail address');
+      return;
+    }
     mutation.mutate(email);
   };
 
