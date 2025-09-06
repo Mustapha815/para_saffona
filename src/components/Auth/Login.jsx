@@ -213,7 +213,7 @@ localStorage.setItem('islogged', 'true'); // بلا JSON.stringify
         </div>
 
         <div className="text-center">
-          <p className="text-xs text-gray-500">© {new Date().getFullYear()} PharmaCare. All rights reserved.</p>
+          <p className="text-xs text-gray-500">© {new Date().getFullYear()} Parasaffona. All rights reserved.</p>
         </div>
       </div>
     </div>

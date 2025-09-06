@@ -15,7 +15,7 @@ const VerifyCode = () => {
   const navigate = useNavigate();
   const user_id = location.state?.user_id;
   const pending_user_id = location.state?.pending_user_id;
-  const email = location.state?.email || 'user@example.com';
+  const email = location.state?.email || '';
 
   // Screen resize handler
   useEffect(() => {

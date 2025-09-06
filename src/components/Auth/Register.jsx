@@ -79,7 +79,7 @@ const Register = () => {
       // Add a small delay to show the loading dots before navigation
       setTimeout(() => {
         navigate("/verify-code", { 
-          state: { pending_user_id: res.pending_user_id }, 
+          state: { pending_user_id: res.pending_user_id , email: formData.email }, 
           replace: true 
         });
       }, 800);
