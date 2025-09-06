@@ -76,9 +76,9 @@ const { data: orders = [], isLoading, error } = useQuery({
     }
   };
   const deliveryAreas = [
-    { id: 1, name: 'Dakhla', delivery_fee: 5.00 },
-    { id: 2, name: 'Southern_Region', delivery_fee: 8.00 },
-    { id: 3, name: 'Upper_Agadir', delivery_fee: 12.00 },
+    { id: 1, name: 'Dakhla', delivery_fee: 10.00 },
+    { id: 2, name: 'Southern_Region', delivery_fee: 25.00 },
+    { id: 3, name: 'Upper_Agadir', delivery_fee: 35.00 },
   ];
 
   // Calculate total items in an order
@@ -145,6 +145,7 @@ const { data: orders = [], isLoading, error } = useQuery({
       </div>
     );
   }
+
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
@@ -251,15 +252,17 @@ const { data: orders = [], isLoading, error } = useQuery({
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-gray-600">{t('subtotal')}</span>
-                        <span className="font-medium">${parseFloat(order.total_order).toFixed(2)}</span>
+                        <span className="font-medium">{parseFloat(order.order_items.reduce((acc, item) => acc + parseFloat(item.total_price), 0)).toFixed(2)} MAD</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">{t('shipping')}</span>
-                        <span className="font-medium">$0.00</span>
+                        <span className="font-medium">
+                          {deliveryAreas.find(area => area.id === order.delivery_area_id)?.delivery_fee || 0} MAD
+                        </span>
                       </div>
                       <div className="flex justify-between pt-2 border-t border-gray-200">
                         <span className="text-gray-900 font-medium">{t('total')}</span>
-                        <span className="text-blue-600 font-bold">${parseFloat(order.total_order).toFixed(2)}</span>
+                        <span className="text-blue-600 font-bold">{parseFloat(order.total_order).toFixed(2)} MAD</span>
                       </div>
                     </div>
                   </div>
