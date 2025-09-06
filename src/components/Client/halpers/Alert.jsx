@@ -41,23 +41,7 @@ const Alert = ({ show, onClose, message , duration = 3000}) => {
         ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-8 opacity-0'}
       `}>
         <div className="flex-shrink-0 mt-0.5">
-          <div className="w-6 h-6 md:w-8 md:h-8 bg-blue-100 rounded-full flex items-center justify-center">
-            <svg 
-              className="w-4 h-4 md:w-5 md:h-5 text-blue-500" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24" 
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth="2" 
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              ></path>
-            </svg>
-          </div>
-        </div>
+      </div>
         
         <div className="flex-1">
           <p className="text-gray-800 text-sm md:text-base">
