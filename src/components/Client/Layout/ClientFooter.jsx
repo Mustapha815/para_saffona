@@ -5,8 +5,10 @@ import {
   Phone, 
   Mail, 
   Instagram, 
-  Heart
+  Heart,
 } from 'lucide-react';
+import { SiTiktok } from "react-icons/si";
+
 import { useLanguage } from '../../../contexts/LanguageContext';
 
 const ClientFooter = () => {
@@ -69,7 +71,7 @@ const ClientFooter = () => {
             <div className="bg-white/10 p-1.5 rounded-md flex-shrink-0">
               <Phone className="h-4 w-4 text-blue-500" />
             </div>
-            <p className="text-white text-sm font-medium">+212 5 22 XX XX XX</p>
+            <p className="text-white text-sm font-medium">+212 6 67 22 47 04</p>
           </li>
           <li className="flex items-center gap-3">
             <div className="bg-white/10 p-1.5 rounded-md flex-shrink-0">
@@ -87,10 +89,20 @@ const ClientFooter = () => {
         </h4>
         <div className="flex gap-3 pt-2">
           <Link 
-            to={'https://www.instagram.com/para_saffona/'} 
+            to={'https://www.instagram.com/para_saffona?igsh=ZzlhMXA0a2Y1Zm5n'} 
+            target='_blank'
             className="bg-white/10 p-2 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
           >
             <Instagram className="h-5 w-5 text-pink-500" />
+          </Link>
+        </div>
+        <div className="flex gap-3 pt-2">
+          <Link 
+            to={'https://www.tiktok.com/@para_soffana?_t=ZS-8zYLeRh9yMx&_r=1'} 
+            target='_blank'
+            className="bg-white/10 p-2 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+          >
+            <SiTiktok className="h-5 w-5 text-white-900" />
           </Link>
         </div>
       </div>
@@ -98,19 +110,30 @@ const ClientFooter = () => {
   </div>
 
   {/* Bottom Bar */}
-  <div className="relative border-t border-white/20">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-2">
-      <div className="flex items-center gap-1.5">
-        <Heart className="h-4 w-4 text-red-500" />
-        <p className="text-white text-xs">
-          © 2025 ParaPharmacie. {t('madeBy')} <a href="https://www.oramadev.com" target="_blank" rel="noopener noreferrer" className="text-white/90 hover:underline">OramaDev</a>
-        </p>
-      </div>
-      <p className="text-white/80 text-xs">
-        {t('allRightsReserved')}
+<div className="relative border-t border-white/20 pb-14">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 
+                  flex flex-col items-center justify-center text-center gap-2
+                  md:flex-row md:justify-between md:items-center md:text-left">
+    <div className="flex items-center gap-1.5">
+      <Heart className="h-4 w-4 text-red-500" />
+      <p className="text-white text-sm">
+        © 2025 ParaSaffona. {t('madeBy')}{" "}
+        <a
+          href="https://www.oramadev.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-300 hover:underline"
+        >
+          OramaDev
+        </a>
       </p>
     </div>
+    <p className="text-white/80 text-xs">
+      {t('allRightsReserved')}
+    </p>
   </div>
+</div>
+
 </footer>
 
 

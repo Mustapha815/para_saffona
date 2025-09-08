@@ -5,8 +5,8 @@ import { useLanguage } from "../../../contexts/LanguageContext";
 
 export default function LocalisationSection() {
   const { t } = useLanguage();
-  const phoneNumber = "+212600000000";
-  const whatsappNumber = "212600000000";
+  const phoneNumber = "+212528937306";
+  const whatsappNumber = "212678839767";
   const destination = "23.700881106613554, -15.931406707705198";
 
   return (
