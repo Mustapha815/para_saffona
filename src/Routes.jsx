@@ -54,7 +54,12 @@ function AppRoutes() {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, [logoutMutation]);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return   <section className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 min-h-[500px] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </section>;
 
   if (isError) {
     localStorage.setItem('islogged', 'false');
