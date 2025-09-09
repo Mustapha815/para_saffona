@@ -89,6 +89,7 @@ export const forgotPassword = async (email) => {
   }
 };
 
+
 // Step 2: Reset password with code
 export const update_password = async (newPassData) => {
   try {

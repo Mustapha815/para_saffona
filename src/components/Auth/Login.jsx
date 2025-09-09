@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { Pill, Lock, Mail, ArrowLeft, Sparkles, Shield, Zap, Eye, EyeOff } from 'lucide-react';
+import { Pill, Lock, Mail, ArrowLeft, Sparkles, Shield, Zap, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { login, me } from '../../api/auth';
 
 const Login = () => {
@@ -10,9 +10,39 @@ const Login = () => {
   const navigate = useNavigate();
 
   const [credentials, setCredentials] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
   const [loggedIn, setLoggedIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Validation rules
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Email validation
+    if (!credentials.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(credentials.email)) {
+      newErrors.email = 'Invalid email address';
+    }
+    
+    // Password validation
+    if (!credentials.password) {
+      newErrors.password = 'Password is required';
+    } else if (credentials.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Validate on input change when field has been touched
+  useEffect(() => {
+    if (Object.keys(touched).length > 0) {
+      validateForm();
+    }
+  }, [credentials, touched]);
 
   // Login mutation
   const mutation = useMutation({
@@ -21,7 +51,7 @@ const Login = () => {
       setLoggedIn(true); // trigger user fetch
     },
     onError: (err) => {
-      setError(err.message || 'Login failed. Please try again.');
+      setErrors({ submit: err.message || 'Login failed. Please try again.' });
     },
   });
 
@@ -37,24 +67,42 @@ const Login = () => {
   // Redirect once user data is available
   useEffect(() => {
     if (userData) {
-localStorage.setItem('islogged', 'true'); // بلا JSON.stringify
+      localStorage.setItem('islogged', 'true');
       if (userData.role_id == '1') {
-        navigate('/admin/dashboard'); // adjust to dashboard if needed
+        navigate('/admin/dashboard');
       } else {
-        navigate('/'); // regular user home
+        navigate('/');
       }
     }
   }, [userData, navigate]);
 
   const handleChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
-    setError('');
+    // Clear error for this field when user starts typing
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: '' });
+    }
+  };
+
+  const handleBlur = (e) => {
+    setTouched({ ...touched, [e.target.name]: true });
+    validateForm();
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError('');
-    mutation.mutate(credentials);
+    
+    // Mark all fields as touched to show all errors
+    setTouched({
+      email: true,
+      password: true
+    });
+    
+    // Validate form before submission
+    if (validateForm()) {
+      setErrors({});
+      mutation.mutate(credentials);
+    }
   };
 
   return (
@@ -96,18 +144,17 @@ localStorage.setItem('islogged', 'true'); // بلا JSON.stringify
               </div>
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">Admin Portal</h2>
-          <p className="text-gray-600">Sign in to manage your parapharmacy</p>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">Login</h2>
         </div>
 
         {/* Login Form */}
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <div className="p-6 sm:p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
+            <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+              {errors.submit && (
                 <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm flex items-center">
                   <Shield className="h-4 w-4 mr-2 flex-shrink-0" />
-                  {error}
+                  {errors.submit}
                 </div>
               )}
 
@@ -126,11 +173,23 @@ localStorage.setItem('islogged', 'true'); // بلا JSON.stringify
                     required
                     value={credentials.email}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200"
+                    onBlur={handleBlur}
+                    className={`block w-full pl-10 pr-3 py-3 border ${errors.email && touched.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200`}
                     placeholder="Enter your email"
                     disabled={mutation.isLoading}
                   />
+                  {errors.email && touched.email && (
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      <AlertCircle className="h-5 w-5 text-red-500" />
+                    </div>
+                  )}
                 </div>
+                {errors.email && touched.email && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <AlertCircle className="h-4 w-4 mr-1" />
+                    {errors.email}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -148,7 +207,8 @@ localStorage.setItem('islogged', 'true'); // بلا JSON.stringify
                     required
                     value={credentials.password}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200"
+                    onBlur={handleBlur}
+                    className={`block w-full pl-10 pr-10 py-3 border ${errors.password && touched.password ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200`}
                     placeholder="Enter your password"
                     disabled={mutation.isLoading}
                   />
@@ -160,20 +220,21 @@ localStorage.setItem('islogged', 'true'); // بلا JSON.stringify
                   >
                     {showPassword ? <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" /> : <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />}
                   </button>
+                  {errors.password && touched.password && (
+                    <div className="absolute inset-y-0 right-8 pr-3 flex items-center pointer-events-none">
+                      <AlertCircle className="h-5 w-5 text-red-500" />
+                    </div>
+                  )}
                 </div>
+                {errors.password && touched.password && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <AlertCircle className="h-4 w-4 mr-1" />
+                    {errors.password}
+                  </p>
+                )}
               </div>
 
               <div className="flex items-center justify-between">
-                {/* <div className="flex items-center">
-                  <input 
-                    id="remember-me" 
-                    name="remember-me" 
-                    type="checkbox" 
-                    className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded" 
-                    disabled={mutation.isLoading}
-                  />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">Remember me</label>
-                </div> */}
                 <div className="text-sm">
                   <Link to="/verify-gmail" className="font-medium text-teal-700 hover:text-teal-900">Forgot password?</Link>
                 </div>
@@ -181,8 +242,8 @@ localStorage.setItem('islogged', 'true'); // بلا JSON.stringify
 
               <button
                 type="submit"
-                disabled={mutation.isLoading}
-                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={mutation.isLoading || Object.keys(errors).length > 0}
+                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {mutation.isLoading ? (
                   <div className="flex items-center">

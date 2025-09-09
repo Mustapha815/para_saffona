@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { logout } from '../../../api/auth';
 import {fetch_notifications} from '../../../api/notifications';
+import { useEffect } from 'react';
 
 
 const AdminHeader = () => {
@@ -24,10 +25,20 @@ const AdminHeader = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   // Fetch notifications using React Query
-  const { data: notifications = [], isLoading, error } = useQuery({
-    queryKey: ['notifications'],
-    queryFn: fetch_notifications,
-  });
+const { data: notifications = [], isLoading, error, refetch } = useQuery({
+  queryKey: ['notifications'],
+  queryFn: fetch_notifications,
+  staleTime: 0, // ensures data is considered stale immediately
+});
+
+// Polling using useEffect
+useEffect(() => {
+  const interval = setInterval(() => {
+    refetch(); // fetch latest notifications
+  }, 5000); // every 5 seconds
+  return () => clearInterval(interval);
+}, [refetch]);
+
 
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },

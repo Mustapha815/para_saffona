@@ -1,41 +1,45 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Bell, CheckCircle, Trash2, X, Package, ShoppingCart, AlertCircle, Calendar } from 'lucide-react';
-import { fetch_notifications, fetch_update_notification, fetch_delete_notification } from '../../../api/notifications'; // Adjust the import path as needed
+import React, { useState, useEffect } from 'react';
+import { fetch_delete_notification, fetch_notifications, fetch_update_notification } from '../../../api/notifications';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLanguage } from '../../../contexts/LanguageContext';
+import { AlertCircle, Bell, CheckCircle, Package, ShoppingCart, Trash2, X } from 'lucide-react';
+// ... other imports
 
 const AdminNotifications = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [activeType, setActiveType] = useState('all');
   const queryClient = useQueryClient();
-  const {t} = useLanguage();
+  const { t } = useLanguage();
   const isLogged = localStorage.getItem('islogged') === 'true';
 
-  // Fetch notifications using React Query
-  const { data: notifications = [], isLoading, error } = useQuery({
+  const { data: notifications = [], isLoading, error, refetch } = useQuery({
     queryKey: ['notifications'],
     queryFn: fetch_notifications,
-      enabled: !!isLogged, // Only run the query if the user is logged in
-    refreshInterval: 1000, // Refetch every 1 second
+    enabled: !!isLogged,
   });
 
-  // Update notification mutation
+  // Polling using setInterval
+  useEffect(() => {
+    if (!isLogged) return;
+    const interval = setInterval(() => {
+      refetch(); // This will fetch new data and update the UI
+    }, 5000); // every 5 seconds
+    return () => clearInterval(interval);
+  }, [isLogged, refetch]);
+
+  // Mutations (update/delete) same as before
   const updateNotificationMutation = useMutation({
     mutationFn: (id) => fetch_update_notification(id),
-    onSuccess: () => {
-      // Invalidate and refetch notifications after successful update
-      queryClient.invalidateQueries(['notifications']);
-    },
+    onSuccess: () => queryClient.invalidateQueries(['notifications']),
   });
 
-  // Delete notification mutation
   const deleteNotificationMutation = useMutation({
     mutationFn: (id) => fetch_delete_notification(id),
-    onSuccess: () => {
-      // Invalidate and refetch notifications after successful deletion
-      queryClient.invalidateQueries(['notifications']);
-    },
+    onSuccess: () => queryClient.invalidateQueries(['notifications']),
   });
+
+  // rest of your code remains unchanged...
+
 
   // Filter notifications based on active tabs
   const filteredNotifications = notifications.filter(notification => {

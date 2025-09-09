@@ -15,7 +15,7 @@ const VerifyCode = () => {
   const navigate = useNavigate();
   const user_id = location.state?.user_id;
   const pending_user_id = location.state?.pending_user_id;
-  const email = location.state?.email || '';
+  const email = location.state?.email || 'user@example.com';
 
   // Screen resize handler
   useEffect(() => {
@@ -107,37 +107,7 @@ const VerifyCode = () => {
     }
   };
 
-  // Resend code
-// state
 
-// effect لتشغيل العد التنازلي
-useEffect(() => {
-  if (countdown <= 0) return;
-
-  const timer = setTimeout(() => {
-    setCountdown(countdown - 1);
-  }, 1000);
-
-  return () => clearTimeout(timer);
-}, [countdown]);
-
-// resend code function
-const handleResendCode = async () => {
-  if (!email) return;
-
-  setError('');
-  setLoading(true);
-
-  try {
-   await forgotPassword(email);
-   setCountdown(30); 
-  } catch (err) {
-    setError(err.message || 'Failed to resend code.');
-    setCountdown(0);
-  } finally {
-    setLoading(false);
-  }
-};
 
 
 
@@ -211,20 +181,6 @@ const handleResendCode = async () => {
                 )}
               </button>
 
-              <div className="text-center pt-3 sm:pt-4 border-t border-gray-200">
-                <p className="text-xs sm:text-sm text-gray-600">
-                  Didn't receive the code?{' '}
-                  {countdown > 0 ? (
-                    <span className="text-gray-500">
-                      Resend in <Clock className="h-3 w-3 inline mb-0.5" /> {countdown}s
-                    </span>
-                  ) : (
-                    <button type="button" onClick={handleResendCode} disabled={loading} className="font-medium text-teal-700 hover:text-teal-900">
-                      Resend code
-                    </button>
-                  )}
-                </p>
-              </div>
             </form>
           </div>
         </div>

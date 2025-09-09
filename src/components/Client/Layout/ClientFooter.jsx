@@ -12,6 +12,13 @@ import { SiTiktok } from "react-icons/si";
 import { useLanguage } from '../../../contexts/LanguageContext';
 
 const ClientFooter = () => {
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+  React.useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
   const { t } = useLanguage();
   return (
      <footer className="relative overflow-hidden text-white bg-[radial-gradient(100%_100%_at_100%_0%,#2E7F88_0%,#21867A_100%)]">
@@ -77,35 +84,65 @@ const ClientFooter = () => {
             <div className="bg-white/10 p-1.5 rounded-md flex-shrink-0">
               <Mail className="h-4 w-4 text-red-500" />
             </div>
-            <p className="text-white text-sm font-medium">info@pharmacare.ma</p>
+            <p className="text-white text-sm font-medium">parapharmaciesoffana@gmail.com</p>
           </li>
         </ul>
       </div>
 
-      {/* Social Media */}
-      <div className="space-y-4">
-        <h4 className="text-lg font-bold text-white">
-          {t('socialMedia')}
-        </h4>
-        <div className="flex gap-3 pt-2">
-          <Link 
-            to={'https://www.instagram.com/para_saffona?igsh=ZzlhMXA0a2Y1Zm5n'} 
-            target='_blank'
-            className="bg-white/10 p-2 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
-          >
-            <Instagram className="h-5 w-5 text-pink-500" />
-          </Link>
-        </div>
-        <div className="flex gap-3 pt-2">
-          <Link 
-            to={'https://www.tiktok.com/@para_soffana?_t=ZS-8zYLeRh9yMx&_r=1'} 
-            target='_blank'
-            className="bg-white/10 p-2 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
-          >
-            <SiTiktok className="h-5 w-5 text-white-900" />
-          </Link>
-        </div>
-      </div>
+   {/* Social Media */}
+<div className="space-y-4">
+  <h4 className="text-lg font-bold text-white">{t('socialMedia')}</h4>
+
+  {/* Instagram */}
+  <div className="flex gap-3 pt-2">
+    <a
+      href={windowWidth >= 640
+        ? 'https://www.instagram.com/para_saffona'
+        : 'instagram://user?username=para_saffona'}
+      target={windowWidth >= 640 ? '_blank' : '_self'}
+      rel="noopener noreferrer"
+      className="bg-white/10 p-2 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+      onClick={(e) => {
+        if (windowWidth < 640) {
+          // محاولة فتح التطبيق، fallback للمتصفح بعد 1 ثانية
+          const timeout = setTimeout(() => {
+            window.location.href = 'https://www.instagram.com/para_saffona';
+          }, 1000);
+          window.location.href = 'instagram://user?username=para_saffona';
+          setTimeout(() => clearTimeout(timeout), 1500);
+          e.preventDefault();
+        }
+      }}
+    >
+      <Instagram className="h-5 w-5 text-pink-500" />
+    </a>
+  </div>
+
+  {/* TikTok */}
+  <div className="flex gap-3 pt-2">
+    <a
+      href={windowWidth >= 640
+        ? 'https://www.tiktok.com/@para_soffana'
+        : 'tiktok://user?username=para_soffana'}
+      target={windowWidth >= 640 ? '_blank' : '_self'}
+      rel="noopener noreferrer"
+      className="bg-white/10 p-2 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+      onClick={(e) => {
+        if (windowWidth < 640) {
+          const timeout = setTimeout(() => {
+            window.location.href = 'https://www.tiktok.com/@para_soffana';
+          }, 1000);
+          window.location.href = 'tiktok://user?username=para_soffana';
+          setTimeout(() => clearTimeout(timeout), 1500);
+          e.preventDefault();
+        }
+      }}
+    >
+      <SiTiktok className="h-5 w-5 text-white" />
+    </a>
+  </div>
+</div>
+
     </div>
   </div>
 
@@ -115,7 +152,6 @@ const ClientFooter = () => {
                   flex flex-col items-center justify-center text-center gap-2
                   md:flex-row md:justify-between md:items-center md:text-left">
     <div className="flex items-center gap-1.5">
-      <Heart className="h-4 w-4 text-red-500" />
       <p className="text-white text-sm">
         © 2025 ParaSaffona. {t('madeBy')}{" "}
         <a
