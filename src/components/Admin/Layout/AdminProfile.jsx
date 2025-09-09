@@ -479,30 +479,7 @@ const AdminProfile = () => {
           </div>
         </div>
 
-        {/* Recent Activity Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('recentActivity')}</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between py-2 border-b">
-              <span className="text-gray-700">{t('lastLogin')}</span>
-              <span className="text-gray-900">{t('todayAt')} 14:30</span>
-            </div>
-            <div className="flex items-center justify-between py-2 border-b">
-              <span className="text-gray-700">{t('accountCreated')}</span>
-              <span className="text-gray-900">
-                {user.created_at ? new Date(user.created_at).toLocaleDateString('en-US', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                }) : 'N/A'}
-              </span>
-            </div>
-            <div className="flex items-center justify-between py-2">
-              <span className="text-gray-700">{t('profileLastUpdated')}</span>
-              <span className="text-gray-900">2 {t('daysAgo')}</span>
-            </div>
-          </div>
-        </div>
+      
       </div>
     </div>
   );

@@ -181,6 +181,9 @@ const PackManagement = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t('Stock')}
                     </th>
+                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t('Number of Clicks')}
+                    </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t('products')}
                     </th>
@@ -210,10 +213,13 @@ const PackManagement = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        ${pack.price}
+                        {pack.price} DH
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {pack.stock}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {pack.number_click || 0}
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm text-gray-900">
@@ -625,11 +631,12 @@ switch (name) {
                     {product.name}
                   </h3>
                   <p className="text-green-600 font-bold text-sm">
-                    ${product.price}
+                    {product.price} DH
                   </p>
                   <p className="text-xs text-gray-500">
                     {t('stock')}: {product.stock}
                   </p>
+                  
                   {formData.product_ids.includes(product.id) && (
                     <div className="absolute top-2 right-2 bg-blue-600 rounded-full p-1">
                       <Check className="h-3 w-3 text-white" />

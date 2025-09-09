@@ -405,6 +405,8 @@ const ProductList = () => {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('Category')}</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('Current Stock')}</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('Price')}</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('Number of Clicks')}</th>
+
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('Offer')}</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('Status')}</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('Actions')}</th>
@@ -448,6 +450,7 @@ const ProductList = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap  text-sm text-gray-900">{product.stock}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{parseFloat(product.price).toLocaleString()} {t('currency')}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.number_click || 0}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {hasOffer ? (
                       <div className="flex flex-col">

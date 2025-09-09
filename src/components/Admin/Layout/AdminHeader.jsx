@@ -35,7 +35,7 @@ const { data: notifications = [], isLoading, error, refetch } = useQuery({
 useEffect(() => {
   const interval = setInterval(() => {
     refetch(); // fetch latest notifications
-  }, 5000); // every 5 seconds
+  }, 10000); // every 10 seconds
   return () => clearInterval(interval);
 }, [refetch]);
 

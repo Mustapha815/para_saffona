@@ -23,7 +23,7 @@ const AdminNotifications = () => {
     if (!isLogged) return;
     const interval = setInterval(() => {
       refetch(); // This will fetch new data and update the UI
-    }, 5000); // every 5 seconds
+    }, 10000); // every 5 seconds
     return () => clearInterval(interval);
   }, [isLogged, refetch]);
 

@@ -451,7 +451,7 @@ const AdminOrdersDashboard = () => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Total Amount:</span>
-                      <span className="font-medium text-green-600">${selectedOrder?.total_order}</span>
+                      <span className="font-medium text-green-600">{selectedOrder?.total_order} DH</span>
                     </div>
                   </div>
                 </div>
@@ -484,9 +484,9 @@ const AdminOrdersDashboard = () => {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium text-gray-900">${item.total_price}</p>
+                        <p className="font-medium text-gray-900">{item.total_price} DH</p>
                         <p className="text-sm text-gray-500">
-                          ${(parseFloat(item.total_price) / item.quantity).toFixed(2)} each
+                          {(parseFloat(item.total_price) / item.quantity).toFixed(2)} DH each
                         </p>
                       </div>
                     </div>

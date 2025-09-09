@@ -589,10 +589,12 @@ const translations = {
           'is out of stock.':'is out of stock.',
           'is low on stock.':'is low on stock.',
           'No notifications':'No notifications',
-          'You\'re all caught up! No notifications to display.': 'You\'re all caught up! No notifications to display.'
+          'You\'re all caught up! No notifications to display.': 'You\'re all caught up! No notifications to display.',
+          'Number of Clicks': 'Number of Clicks',
 
   },
   fr: {
+    'Number of Clicks': 'Nombre de Clics',
     'You\'re all caught up! No notifications to display.': 'Vous avez tout vu ! Aucune notification à afficher.',
     'No notifications': 'Aucune notification',
     'is out of stock.': 'est en rupture de stock.',
