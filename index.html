@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar">
+<html>
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/jpeg" href="https://parasaffona.com/logo.jpg" />
@@ -26,17 +26,32 @@
     <meta property="og:url" content="https://parasaffona.com" />
     <meta property="og:type" content="website" />
 
-    
+    <!-- ✅ Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Parasaffona | أفضل منصة بارافارماسية في الداخلة" />
+    <meta name="twitter:description" content="اكتشف أفضل منتجات الصيدليات في الداخلة: العناية بالبشرة، المكملات الغذائية، منتجات الأطفال والمزيد." />
+    <meta name="twitter:image" content="https://parasaffona.com/logo.jpg" />
 
     <!-- ✅ Structured Data: Organization with Logo -->
- 
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Parasaffona",
+      "url": "https://parasaffona.com",
+      "logo": "https://parasaffona.com/logo.jpg",
+      "sameAs": [
+        "https://www.facebook.com/parasaffona",
+        "https://www.instagram.com/para_saffona"
+      ],
+      "description": "Parasaffona تقدم أفضل منتجات الصيدليات وبارافارماسية في الداخلة، المغرب، بما في ذلك العناية بالبشرة، الشعر، الأطفال، المكملات الغذائية والعطور."
+    }
+    </script>
 
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    
-
   </body>
 </html>
