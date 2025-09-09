@@ -4,7 +4,7 @@ const uiReducer = createSlice({
   name: 'ui',
   initialState: {
     currentView: 'dashboard',
-    language: 'en',
+    language: 'fr',
   },
   reducers: {
     setCurrentView: (state, action) => {
