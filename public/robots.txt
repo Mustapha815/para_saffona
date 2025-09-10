@@ -1,0 +1,12 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /login
+Disallow: /register
+Disallow: /verify-gmail
+Disallow: /verify-code
+Disallow: /reset-password
+Disallow: /account-profile
+Disallow: /change-password
+Allow: /
+
+Sitemap: https://parasaffona.com/sitemap.xml

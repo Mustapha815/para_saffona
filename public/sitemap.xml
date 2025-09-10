@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Client Pages -->
+  <url>
+    <loc>https://parasaffona.com/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://parasaffona.com/shopping-cart</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://parasaffona.com/favorites</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://parasaffona.com/brands</loc>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Add dynamic product pages if possible -->
+  <!-- Example for React routes -->
+  <!-- <url>
+    <loc>https://parasaffona.com/brands/1</loc>
+    <priority>0.6</priority>
+  </url> -->
+
+</urlset>
