@@ -151,7 +151,7 @@ const CompaniesManagement = () => {
                 <tr key={company.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="bg-blue-100 p-2 rounded-lg mr-3">
+                      <div className="bg-blue-100  rounded-lg mr-3">
                        <img
                           className="h-10 w-10 rounded-lg object-cover cursor-pointer"
                           src={`${import.meta.env.VITE_IMG_BASE_URL}/${company.image}`}
