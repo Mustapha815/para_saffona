@@ -12,7 +12,6 @@ import { BrowserRouter } from 'react-router-dom';
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
   <BrowserRouter basename="/">
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
@@ -20,7 +19,6 @@ createRoot(document.getElementById('root')).render(
       </QueryClientProvider>
     </Provider>
   </BrowserRouter>
-  </StrictMode>
 );
 
  

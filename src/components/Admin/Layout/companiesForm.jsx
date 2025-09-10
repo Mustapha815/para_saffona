@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetch_add_company, fetch_update_company } from "../../../api/companies";
-import { X, Save, Building2, Upload } from "lucide-react";
+import { X, Save, Building2, Upload, Trash2, AlertCircle } from "lucide-react";
 import { useLanguage } from '../../../contexts/LanguageContext';
 
 const CompanyForm = ({ company, onClose }) => {
@@ -12,10 +12,12 @@ const CompanyForm = ({ company, onClose }) => {
     name: "", 
     image: null
   });
-  const [previewUrl, setPreviewUrl] = useState("");
-  const [errors, setErrors] = useState({});
+  const [imagePreview, setImagePreview] = useState("");
   const [serverError, setServerError] = useState("");
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
   
+  // Load existing company for edit
   useEffect(() => {
     if (company) {
       setFormData({ 
@@ -25,24 +27,58 @@ const CompanyForm = ({ company, onClose }) => {
       
       // Set preview if company has an image
       if (company.image_url) {
-        setPreviewUrl(company.image_url);
+        setImagePreview(company.image_url);
       }
     } else {
       // Reset form for new company
       setFormData({ name: "", image: null });
-      setPreviewUrl("");
+      setImagePreview("");
       setErrors({});
       setServerError("");
+      setTouched({});
     }
   }, [company]);
+
+  // Validation function
+  const validateField = (name, value) => {
+    let error = '';
+
+    switch (name) {
+      case 'name':
+        if (!value.trim()) error = t("comNameRequired") || "Company name is required";
+        else if (value.trim().length < 2) error = t("comNameMinLength") || "Company name must be at least 2 characters long";
+        else if (value.trim().length > 100) error = t("comNameMaxLength") || "Company name must be less than 100 characters";
+        break;
+      case 'image':
+        if (!company && !value) error = t("comImageRequired") || "Company image is required";
+        break;
+      default:
+        break;
+    }
+
+    return error;
+  };
+
+  // Validate all fields
+  const validateForm = () => {
+    const newErrors = {};
+
+    Object.keys(formData).forEach(key => {
+      const error = validateField(key, formData[key]);
+      if (error) newErrors[key] = error;
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const mutation = useMutation({
     mutationFn: async (data) => {
       // Create FormData to handle file upload
       const formDataToSend = new FormData();
-      formDataToSend.append("name", data.name);
+      formDataToSend.append("name", data.name.trim());
       
-      if (data.image) {
+      if (data.image instanceof File) {
         formDataToSend.append("image", data.image);
       }
       
@@ -56,83 +92,87 @@ const CompanyForm = ({ company, onClose }) => {
       }
     },
 
-    onMutate: async (newCompany) => {
-      await queryClient.cancelQueries(["companies"]);
-      const previousCompanies = queryClient.getQueryData(["companies"]);
-
-      return { previousCompanies };
-    },
-
     onSuccess: () => {
       queryClient.invalidateQueries(["companies"]);
       onClose();
     },
 
-    onError: (err, _newCompany, context) => {
-      queryClient.setQueryData(["companies"], context.previousCompanies);
-      
-      // Handle server validation errors
+    onError: (err) => {
+      let errorMessage = t("somethingWentWrong") || "Something went wrong";
+
       if (err.response?.data?.errors) {
-        setErrors(err.response.data.errors);
+        const serverErrors = {};
+        Object.keys(err.response.data.errors).forEach(key => {
+          serverErrors[key] = err.response.data.errors[key][0];
+        });
+        setErrors(serverErrors);
+        return;
       } else if (err.response?.data?.message) {
-        setServerError(err.response.data.message);
-      } else {
-        setServerError(err.message || t("somethingWentWrong"));
+        errorMessage = err.response.data.message;
+      } else if (err.message?.includes('Network Error')) {
+        errorMessage = t("networkError") || "Network error";
       }
+
+      setServerError(errorMessage);
     },
   });
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    
-    // Clear errors when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }));
-    }
-    if (serverError) {
-      setServerError("");
-    }
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
 
-    if (name === "image" && files && files[0]) {
-      const file = files[0];
-      setFormData(prev => ({ ...prev, [name]: file }));
-      
-      // Create a preview URL for the image
-      const reader = new FileReader();
-      reader.onload = () => {
-        setPreviewUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+    if (touched[name]) {
+      const error = validateField(name, value);
+      setErrors(prev => ({ ...prev, [name]: error }));
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    setTouched(prev => ({ ...prev, [name]: true }));
 
-    if (!formData.name.trim()) {
-      newErrors.name = t("comNameRequired") || "Company name is required";
-    } else if (formData.name.trim().length < 2) {
-      newErrors.name = t("comNameMinLength") || "Company name must be at least 2 characters long";
+    const error = validateField(name, value);
+    setErrors(prev => ({ ...prev, [name]: error }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        setErrors(prev => ({ ...prev, image: t("imageFileOnly") || "Please select an image file" }));
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        setErrors(prev => ({ ...prev, image: t("imageMaxSize") || "Image must be less than 5MB" }));
+        return;
+      }
+
+      setFormData(prev => ({ ...prev, image: file }));
+      setImagePreview(URL.createObjectURL(file));
+      setErrors(prev => ({ ...prev, image: '' }));
     }
+  };
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const removeImage = () => {
+    setFormData(prev => ({ ...prev, image: null }));
+    setImagePreview("");
+    if (!company) {
+      setErrors(prev => ({ ...prev, image: t("comImageRequired") || "Company image is required" }));
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Clear previous errors
-    setErrors({});
-    setServerError("");
+    setTouched({
+      name: true,
+      image: true
+    });
 
-    if (!validateForm()) {
-      return;
+    if (validateForm()) {
+      setServerError('');
+      mutation.mutate(formData);
     }
-
-    mutation.mutate(formData);
   };
 
   const isLoading = mutation.isLoading;
@@ -154,8 +194,9 @@ const CompanyForm = ({ company, onClose }) => {
                 {company ? t("comEditDesc") : t("comAddDesc")}
               </p>
               {serverError && (
-                <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-red-600 text-sm">{serverError}</p>
+                <div className="mt-2 p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg flex items-center">
+                  <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />
+                  {serverError}
                 </div>
               )}
             </div>
@@ -181,55 +222,72 @@ const CompanyForm = ({ company, onClose }) => {
               name="name"
               value={formData.name}
               onChange={handleChange}
+              onBlur={handleBlur}
               disabled={isLoading}
               className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                errors.name ? 'border-red-300' : 'border-gray-300'
+                errors.name ? 'border-red-500' : 'border-gray-300'
               } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               placeholder={t("comNamePlaceholder")}
             />
             {errors.name && (
-              <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+              <p className="mt-1 text-sm text-red-600 flex items-center">
+                <AlertCircle className="w-4 h-4 mr-1 flex-shrink-0" />
+                {errors.name}
+              </p>
             )}
           </div>
 
           {/* Company Image Field */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t("comImageLabel")}
+              {t("comImageLabel")} {company ? '' : '*'}
             </label>
             
-            {/* Image Preview */}
-            {previewUrl && (
-              <div className="mb-4">
-                <img 
-                  src={previewUrl} 
-                  alt="Preview" 
-                  className="h-32 w-32 object-cover rounded-lg border border-gray-300"
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <label className={`flex flex-col items-center justify-center w-32 h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+                errors.image ? 'border-red-500' : 'border-gray-300 hover:border-blue-500'
+              } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                <Upload className="w-6 h-6 mb-2 text-gray-500" />
+                <span className="text-xs text-gray-500 text-center px-2">{t("comImagePlaceholder")}</span>
+                <input 
+                  type="file" 
+                  name="image" 
+                  onChange={handleImageChange}
+                  disabled={isLoading}
+                  accept="image/*"
+                  className="hidden"
                 />
-              </div>
+              </label>
+              
+              {imagePreview && (
+                <div className="relative w-32 h-32">
+                  <img 
+                    src={imagePreview} 
+                    alt="Preview" 
+                    className="w-full h-full object-cover rounded-lg border border-gray-200"
+                  />
+                  <button
+                    type="button"
+                    onClick={removeImage}
+                    disabled={isLoading}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </div>
+            
+            {errors.image && (
+              <p className="mt-1 text-sm text-red-600 flex items-center">
+                <AlertCircle className="w-4 h-4 mr-1 flex-shrink-0" />
+                {errors.image}
+              </p>
             )}
             
-            <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer ${
-              errors.image ? 'border-red-300' : 'border-gray-300'
-            } ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:border-gray-400'}`}>
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                <p className="text-sm text-gray-500">
-                  {t("comImagePlaceholder")}
-                </p>
-              </div>
-              <input 
-                type="file" 
-                name="image" 
-                onChange={handleChange}
-                disabled={isLoading}
-                accept="image/*"
-                className="hidden"
-              />
-            </label>
-            {errors.image && (
-              <p className="mt-1 text-sm text-red-600">{errors.image}</p>
-            )}
+            <p className="text-xs text-gray-500 mt-2">
+              {t("supportedFormats") || "Supported formats: JPG, PNG, GIF. Max size: 5MB"}
+            </p>
           </div>
 
           {/* Form Actions */}
@@ -250,7 +308,7 @@ const CompanyForm = ({ company, onClose }) => {
               {isLoading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  {company ? t("comUpdating") : t("comCreating")}
+                  {company ? t("comUpdating") || "Updating..." : t("comCreating") || "Creating..."}
                 </>
               ) : (
                 <>
