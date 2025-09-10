@@ -46,9 +46,14 @@ const CompanyForm = ({ company, onClose }) => {
         formDataToSend.append("image", data.image);
       }
       
-      return company
-        ? fetch_update_company(company.id, formDataToSend)
-        : fetch_add_company(formDataToSend);
+      if (company) {
+        // For updates, use the _method hack for PUT
+        formDataToSend.append('_method', 'PUT');
+        return fetch_update_company(company.id, formDataToSend);
+      } else {
+        // For creates, use POST
+        return fetch_add_company(formDataToSend);
+      }
     },
 
     onMutate: async (newCompany) => {
