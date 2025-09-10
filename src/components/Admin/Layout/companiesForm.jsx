@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetch_add_company, fetch_update_company } from "../../../api/companies";
-import { X, Save, Building2 } from "lucide-react";
+import { X, Save, Building2, Upload } from "lucide-react";
 import { useLanguage } from '../../../contexts/LanguageContext';
 
 const CompanyForm = ({ company, onClose }) => {
@@ -10,7 +10,9 @@ const CompanyForm = ({ company, onClose }) => {
 
   const [formData, setFormData] = useState({ 
     name: "", 
+    image: null
   });
+  const [previewUrl, setPreviewUrl] = useState("");
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   
@@ -18,10 +20,17 @@ const CompanyForm = ({ company, onClose }) => {
     if (company) {
       setFormData({ 
         name: company.name || "", 
+        image: null
       });
+      
+      // Set preview if company has an image
+      if (company.image_url) {
+        setPreviewUrl(company.image_url);
+      }
     } else {
       // Reset form for new company
-      setFormData({ name: "" });
+      setFormData({ name: "", image: null });
+      setPreviewUrl("");
       setErrors({});
       setServerError("");
     }
@@ -29,10 +38,17 @@ const CompanyForm = ({ company, onClose }) => {
 
   const mutation = useMutation({
     mutationFn: async (data) => {
-      // For companies, we just send JSON data (no FormData needed)
+      // Create FormData to handle file upload
+      const formDataToSend = new FormData();
+      formDataToSend.append("name", data.name);
+      
+      if (data.image) {
+        formDataToSend.append("image", data.image);
+      }
+      
       return company
-        ? fetch_update_company(company.id, data)
-        : fetch_add_company(data);
+        ? fetch_update_company(company.id, formDataToSend)
+        : fetch_add_company(formDataToSend);
     },
 
     onMutate: async (newCompany) => {
@@ -62,7 +78,7 @@ const CompanyForm = ({ company, onClose }) => {
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, files } = e.target;
     
     // Clear errors when user starts typing
     if (errors[name]) {
@@ -72,7 +88,19 @@ const CompanyForm = ({ company, onClose }) => {
       setServerError("");
     }
 
-    setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === "image" && files && files[0]) {
+      const file = files[0];
+      setFormData(prev => ({ ...prev, [name]: file }));
+      
+      // Create a preview URL for the image
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const validateForm = () => {
@@ -159,6 +187,46 @@ const CompanyForm = ({ company, onClose }) => {
             )}
           </div>
 
+          {/* Company Image Field */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t("comImageLabel")}
+            </label>
+            
+            {/* Image Preview */}
+            {previewUrl && (
+              <div className="mb-4">
+                <img 
+                  src={previewUrl} 
+                  alt="Preview" 
+                  className="h-32 w-32 object-cover rounded-lg border border-gray-300"
+                />
+              </div>
+            )}
+            
+            <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer ${
+              errors.image ? 'border-red-300' : 'border-gray-300'
+            } ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:border-gray-400'}`}>
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                <p className="text-sm text-gray-500">
+                  {t("comImagePlaceholder")}
+                </p>
+              </div>
+              <input 
+                type="file" 
+                name="image" 
+                onChange={handleChange}
+                disabled={isLoading}
+                accept="image/*"
+                className="hidden"
+              />
+            </label>
+            {errors.image && (
+              <p className="mt-1 text-sm text-red-600">{errors.image}</p>
+            )}
+          </div>
+
           {/* Form Actions */}
           <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
             <button 
@@ -177,7 +245,7 @@ const CompanyForm = ({ company, onClose }) => {
               {isLoading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  {company ? t("catUpdating") : t("catCreating")}
+                  {company ? t("comUpdating") : t("comCreating")}
                 </>
               ) : (
                 <>

@@ -135,11 +135,11 @@ const CompaniesManagement = () => {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
+
+              
+
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {t('comName') || 'Name'}
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t('comCreatedAt') || 'Created At'}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {t('comActions') || 'Actions'}
@@ -152,8 +152,11 @@ const CompaniesManagement = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="bg-blue-100 p-2 rounded-lg mr-3">
-                        <Building2 className="h-5 w-5 text-blue-600" />
-                      </div>
+                       <img
+                          className="h-10 w-10 rounded-lg object-cover cursor-pointer"
+                          src={`${import.meta.env.VITE_IMG_BASE_URL}/${company.image}`}
+                          alt={company.name}
+                        />                      </div>
                       <div>
                         <div className="text-sm font-medium text-gray-900">
                           {getCompanyName(company)}
@@ -161,9 +164,7 @@ const CompaniesManagement = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(company.created_at).toLocaleDateString()}
-                  </td>
+               
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
                       <button

@@ -23,6 +23,7 @@ export const fetch_add_company = async (newCompany) => {
     const response = await api.post("/companies", newCompany, {
       headers: {
         'Content-Type': 'application/json',
+        'application': 'multipart/form-data'
       }
     });
     return response.data;
@@ -37,6 +38,7 @@ export const fetch_update_company = async (id, updatedCompany) => {
     const response = await api.put(`/companies/${id}`, updatedCompany, {
       headers: {
         'Content-Type': 'application/json',
+        'application': 'multipart/form-data'
       }
     });
     return response.data;
