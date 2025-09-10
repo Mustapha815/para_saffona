@@ -41,7 +41,9 @@
   },
   "reactSnap": {
     "inlineCss": true,
-    "puppeteerArgs": ["--no-sandbox"],
+    "puppeteerArgs": [
+      "--no-sandbox"
+    ],
     "minifyHtml": true
   }
 }
