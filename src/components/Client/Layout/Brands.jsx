@@ -32,7 +32,7 @@ const BrandSection = () => {
         await new Promise(resolve => setTimeout(resolve, 500));
         
         // Duplicate brands for seamless scrolling
-        setDuplicatedBrands([...brands]);
+     setDuplicatedBrands([...brands]); 
       } catch (err) {
         console.error('Failed to initialize brands:', err);
       } finally {
@@ -51,7 +51,7 @@ const BrandSection = () => {
     }
 
     const container = scrollContainerRef.current;
-    const maxScroll = container.scrollWidth / 2; // Since we duplicated content
+const maxScroll = container.scrollWidth / 2; // half = original length
     
     // Check if we've reached the end of the original content
     if (container.scrollLeft >= maxScroll - 10) {
@@ -138,31 +138,28 @@ const BrandSection = () => {
             renderSkeletons()
           ) : (
             duplicatedBrands.map((brand, index) => (
-          <div 
-            key={`${brand.id}-${index}`} 
-            onClick={() => handleBrandClick(brand.id)}
-            className="flex-shrink-0 rounded-tl-xl rounded-br-xl px-4 py-3 
-           cursor-pointer mx-2 min-w-[100px]
-           bg-[radial-gradient(100%_100%_at_100%_0%,#4CA3AF_0%,#41c9b8_100%)]
-           text-white shadow-[0px_0.01em_0.01em_rgba(45,35,66,0.4),
-                             0px_0.3em_0.7em_-0.01em_rgba(45,35,66,0.3),
-                             inset_0px_-0.01em_0px_rgba(58,65,111,0.5)]
-           transition duration-200 ease-in-out
-           hover:shadow-[0px_0.1em_0.2em_rgba(45,35,66,0.4),
-                         0px_0.4em_0.7em_-0.1em_rgba(45,35,66,0.3),
-                         inset_0px_-0.1em_0px_#2e8f83]
-           hover:-translate-y-[0.1em]
-           active:shadow-[inset_0px_0.1em_0.6em_#2e8f83]
-           active:translate-y-0"
-          >
-            <div className="flex items-center justify-center">
-              <h3 className="text-sm font-semibold whitespace-nowrap [text-shadow:0_1px_0_rgba(0,0,0,0.4)]">
-                <Link to={`/brands/${brand.id}`} className="text-white hover:text-gray-100 transition-colors">
-                  {brand.name}
-                </Link>
-              </h3>
-            </div>
-          </div>
+<div 
+  key={`${brand.id}-${index}`} 
+  onClick={() => handleBrandClick(brand.id)}
+  className="flex-shrink-0 cursor-pointer mx-2"
+>
+  <div className="flex items-center justify-center">
+    <Link 
+      to={`/brands/${brand.id}`} 
+      className="relative flex items-center justify-center"
+    >
+      {/* Gradient Border */}
+      <div className="p-[2px] rounded-tl-xl rounded-br-xl w-48 border-2 border-teal-400 hover:border-teal-500 transition-colors">
+        <img 
+          src={`${import.meta.env.VITE_IMG_BASE_URL}/${brand.image}`} 
+          alt={brand.name} 
+          className="h-16 w-full md:h-20 object-cover  rounded-tl-xl rounded-br-xl" 
+        />
+      </div>
+    </Link>
+  </div>
+</div>
+
 
             ))
           )}

@@ -22,8 +22,8 @@ export const fetch_add_company = async (newCompany) => {
   try {
     const response = await api.post("/companies", newCompany, {
       headers: {
-        'Content-Type': 'application/json',
-        'application': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data'
+        
       }
     });
     return response.data;
@@ -35,10 +35,9 @@ export const fetch_add_company = async (newCompany) => {
 // Update an existing company
 export const fetch_update_company = async (id, updatedCompany) => {
   try {
-    const response = await api.put(`/companies/${id}`, updatedCompany, {
+    const response = await api.post(`/companies/${id}`, updatedCompany, {
       headers: {
-        'Content-Type': 'application/json',
-        'application': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data'
       }
     });
     return response.data;

@@ -26,8 +26,8 @@ const CompanyForm = ({ company, onClose }) => {
       });
       
       // Set preview if company has an image
-      if (company.image_url) {
-        setImagePreview(company.image_url);
+      if (company.image) {
+        setImagePreview(`${import.meta.env.VITE_IMG_BASE_URL}/${company.image}`);
       }
     } else {
       // Reset form for new company
@@ -87,6 +87,8 @@ const CompanyForm = ({ company, onClose }) => {
         formDataToSend.append('_method', 'PUT');
         return fetch_update_company(company.id, formDataToSend);
       } else {
+        console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',formDataToSend);
+        
         // For creates, use POST
         return fetch_add_company(formDataToSend);
       }
