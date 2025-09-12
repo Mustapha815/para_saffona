@@ -153,7 +153,7 @@ const maxScroll = container.scrollWidth / 2; // half = original length
         <img 
           src={`${import.meta.env.VITE_IMG_BASE_URL}/${brand.image}`} 
           alt={brand.name} 
-          className="h-16 w-full md:h-20 object-cover  rounded-tl-xl rounded-br-xl" 
+          className="h-16 w-full md:h-20 object-fit  rounded-tl-xl rounded-br-xl" 
           loading='lazy'
         />
       </div>
