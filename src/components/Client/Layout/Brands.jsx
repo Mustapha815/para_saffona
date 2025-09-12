@@ -32,7 +32,7 @@ const BrandSection = () => {
         await new Promise(resolve => setTimeout(resolve, 500));
         
         // Duplicate brands for seamless scrolling
-     setDuplicatedBrands([...brands ]); 
+     setDuplicatedBrands([...brands,...brands]); 
       } catch (err) {
         console.error('Failed to initialize brands:', err);
       } finally {
