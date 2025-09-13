@@ -94,7 +94,6 @@ const HeroSection = () => {
     
     return slides;
   }, [productsData, packsData]);
-console.log(slides);
 
   // Auto-advance slides
   useEffect(() => {
@@ -204,7 +203,7 @@ console.log(slides);
             </div>
             
             {/* Floating elements for mobile with increased bottom padding */}
-            <div className="absolute -bottom-5 -left-3 bg-white rounded-xl p-2 shadow-lg transform -rotate-6">
+            <div className="absolute -bottom-2 -left-3 bg-white rounded-xl p-2 shadow-lg transform -rotate-6">
               <div className="flex items-center">
                 <div className="bg-emerald-100 p-2 rounded-lg">
                   <Truck className="h-5 w-5 text-emerald-600" />
