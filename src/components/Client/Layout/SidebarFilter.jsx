@@ -22,7 +22,6 @@ const SidebarFilter = ({
     queryKey: ['companies'],
     queryFn: fetch_companies,
   });
-  console.log('brands:', brands);
 
   const {t}= useLanguage();
     const skinTypes = ['Oily', 'Dry', 'Combination', 'Sensitive', 'Normal'];
@@ -197,7 +196,7 @@ const FilterSection = ({ title, options, filterKey, filters, handleCheckboxChang
       </svg>
     </button>
     <div className={`overflow-hidden transition-all duration-200 ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
-      <div className="px-4 pb-3 space-y-2">
+      <div className="px-4 pb-3 space-y-2 max-h-60 overflow-y-auto">
         {options.map((item, idx) => (
           <label key={idx} className="flex items-center gap-2">
             <input
